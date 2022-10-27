@@ -1,5 +1,5 @@
 <?php
-
+namespace  Core;
 class Router
 {
     protected array $routes = [];
@@ -36,10 +36,14 @@ class Router
         return $this->params;
     }
 
-    public function dispatch($url){
+    public function dispatch($url) :void {
+
+        $url = $this->removeQueryStringVariable($url);
+
         if($this->match($url)){
             $controller = $this->params['controller'];
             $controller = $this->convertToStudlyCaps($controller);
+            $controller = "App\Controllers\\$controller";
 
             if(class_exists($controller)){
                 $controller_object = new $controller();
@@ -66,5 +70,16 @@ class Router
     protected function convertToCamelCase($string): string
     {
         return lcfirst($this->convertToStudlyCaps($string));
+    }
+    protected function removeQueryStringVariable($url){
+        if($url != ''){
+            $parts = explode('&', $url, 2);
+            if(!str_contains($parts[0], '=')){
+                $url = $parts[0];
+            } else {
+                $url = '';
+            }
+        }
+        return $url;
     }
 }
