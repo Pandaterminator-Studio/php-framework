@@ -12,11 +12,9 @@ class Router
         $route = '/^' . $route . '$/i';
         $this->routes[$route] = $params;
     }
-
     public function getRoutes() : array {
         return $this->routes;
     }
-
     public function match($url) : bool {
         foreach($this->routes as $route => $params){
             if(preg_match($route, $url, $matches)) {
@@ -31,11 +29,9 @@ class Router
         }
         return false;
     }
-
     public function getParams() : array {
         return $this->params;
     }
-
     public function dispatch($url) :void {
 
         $url = $this->removeQueryStringVariable($url);
@@ -46,7 +42,7 @@ class Router
             $controller = "App\Controllers\\$controller";
 
             if(class_exists($controller)){
-                $controller_object = new $controller();
+                $controller_object = new $controller($this->params);
                 $action = $this->params['action'];
                 $action = $this->convertToCamelCase($action);
 
@@ -62,7 +58,6 @@ class Router
             echo "No route matched.";
         }
     }
-
     protected function convertToStudlyCaps($string): array|string
     {
         return str_replace(' ','',ucwords(str_replace('-',' ', $string)));
@@ -71,7 +66,7 @@ class Router
     {
         return lcfirst($this->convertToStudlyCaps($string));
     }
-    protected function removeQueryStringVariable($url){
+    protected function removeQueryStringVariable($url) : string {
         if($url != ''){
             $parts = explode('&', $url, 2);
             if(!str_contains($parts[0], '=')){
