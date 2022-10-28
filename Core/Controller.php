@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Exception;
+
 abstract  class Controller
 {
     protected array $route_params = [];
@@ -10,6 +12,9 @@ abstract  class Controller
         $this->route_params = $route_params;
     }
 
+    /**
+     * @throws Exception
+     */
     public function __call($name, $args){
         $method = $name.'Action';
         if(method_exists($this, $method)){
@@ -18,7 +23,7 @@ abstract  class Controller
                 $this->after();
             }
         } else {
-            echo "Method $method not found in controller ". get_class($this);
+            throw new Exception("Method $method not found in controller ". get_class($this));
         }
     }
 

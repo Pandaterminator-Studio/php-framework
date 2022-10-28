@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %} Posts {% endblock%}
+{% block title %} User lists {% endblock%}
 {% block body %}
-<h1>Welcome</h1>
-<p>Hello <?php echo htmlspecialchars($name); ?> </p>
+<h1>Users list</h1>
+<p>Hello {{ name }} </p>
 <ul>
-  <?php foreach ($colours as $colour){ ?>
-  <li><?php echo htmlspecialchars($colour) ;?></li>
-  <?php } ?>
+  {% for user in users %}
+  <li><h2>{{ user.name }}</h2> <p>{{ user.lastname }}</p></li>
+  {% endfor %}
 </ul>
 {% endblock%}

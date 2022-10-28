@@ -1,5 +1,8 @@
 <?php
 
+namespace Core\modules;
+use content;
+
 class router
 {
 
@@ -11,7 +14,8 @@ class router
     private $resizer;
     private $uploader;
 
-    function __construct($mysql, $session,$cookie, $debug, $security, $resizer, $uploader) {
+    function __construct($mysql, $session, $cookie, $debug, $security, $resizer, $uploader)
+    {
         $this->MySQLi = $mysql;
         $this->Session = $session;
         $this->cookie = $cookie;
@@ -24,9 +28,9 @@ class router
 
     private function Load(): void
     {
-        if (enable_login_functions){
-            if($this->Session->Check(login_var)){
-                if(isset($_GET[page_var])){
+        if (enable_login_functions) {
+            if ($this->Session->Check(login_var)) {
+                if (isset($_GET[page_var])) {
                     $content = htmlentities($_GET[page_var]);
                     $this->GetContent($content);
                 } else {
@@ -36,7 +40,7 @@ class router
                 $this->GetContent(login_page);
             }
         } else {
-            if(isset($_GET[page_var])){
+            if (isset($_GET[page_var])) {
                 $content = htmlentities($_GET[page_var]);
                 $this->GetContent($content);
             } else {
@@ -48,7 +52,7 @@ class router
 
     private function GetContent($content): void
     {
-        $filename = 'content/'.$content.'.php';
+        $filename = 'content/' . $content . '.php';
         if (file_exists($filename)) {
             include $filename;
         } else {

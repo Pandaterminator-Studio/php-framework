@@ -10,6 +10,9 @@
         }
     });
 
+    set_error_handler('Core\Error::errorHandler');
+    set_exception_handler('Core\Error::exceptionHandler');
+
     require '../Core/Router.php';
     $router = new Core\Router();
     $router->add('', ['controller' => 'Home', 'action' => 'index']);

@@ -1,4 +1,14 @@
 <?php
+
+use Core\modules\cookie;
+use Core\modules\debugger;
+use Core\modules\mysql;
+use Core\modules\resizer;
+use Core\modules\router;
+use Core\modules\security;
+use Core\modules\session;
+use Core\modules\uploader;
+
 header("Content-Type: text/html; charset=[UTF-8]");
 
 require 'config/config.php';

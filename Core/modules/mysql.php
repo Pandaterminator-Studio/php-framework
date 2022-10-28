@@ -1,17 +1,19 @@
 <?php
 
+namespace Core\modules;
 class mysql
 {
 
     public $MySQLi;
-    private String $db_host = 'localhost';
-    private String $db_user = 'root';
-    private String $db_password = 'root';
-    private String $db_db = 'information_schema';
-    private String $db_port = "3306";
+    private string $db_host = 'localhost';
+    private string $db_user = 'root';
+    private string $db_password = 'root';
+    private string $db_db = 'information_schema';
+    private string $db_port = "3306";
     private $debug;
 
-    function __construct($host, $user, $password, $database_name, $port, $debug) {
+    function __construct($host, $user, $password, $database_name, $port, $debug)
+    {
         $this->db_host = $host;
         $this->db_user = $user;
         $this->db_password = $password;
@@ -19,7 +21,9 @@ class mysql
         $this->db_port = $port;
         $this->debug = $debug;
     }
-    public function Connect(){
+
+    public function Connect()
+    {
         $this->MySQLi = @new mysqli(
             $this->db_host,
             $this->db_user,
@@ -37,20 +41,25 @@ class mysql
         }
 
     }
+
     public function Disconnect(): bool
     {
-        if($this->MySQLi->close()){
+        if ($this->MySQLi->close()) {
             return true;
         } else {
             return false;
             $this->debug->Err("Could not close mysql connection.");
         }
     }
-    public function CreateDB($DB_name){
+
+    public function CreateDB($DB_name)
+    {
         $sql = "CREATE DATABASE $DB_name";
         return $this->MySQLi->query($sql);
     }
-    public function CheckIfDataExist($rows, $table, $where="", $limit="", $order=""): bool {
+
+    public function CheckIfDataExist($rows, $table, $where = "", $limit = "", $order = ""): bool
+    {
         $w = "WHERE $where";
         $o = "ORDER BY $order";
         $l = "LIMIT $limit";
@@ -64,7 +73,9 @@ class mysql
             return false;
         }
     }
-    public function GetData($rows, $table, $where="", $limit="", $order=""){
+
+    public function GetData($rows, $table, $where = "", $limit = "", $order = "")
+    {
         $w = "WHERE $where";
         $o = "ORDER BY $order";
         $l = "LIMIT $limit";
@@ -79,15 +90,21 @@ class mysql
             return json_encode($myArray);
         }
     }
-    public function InsertData($table, $rows, $values) {
+
+    public function InsertData($table, $rows, $values)
+    {
         $sql = "INSERT INTO $table ($rows) VALUES ($values)";
         return $this->MySQLi->query($sql);
     }
-    public function UpdateData($table, $field, $value, $where){
+
+    public function UpdateData($table, $field, $value, $where)
+    {
         $sql = "UPDATE $table SET $field='$value' WHERE $where";
         return $this->MySQLi->query($sql);
     }
-    public function DeleteData($table, $where=""){
+
+    public function DeleteData($table, $where = "")
+    {
         $sql = "DELETE FROM $table WHERE $where";
         return $this->MySQLi->query($sql);
     }
