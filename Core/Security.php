@@ -1,9 +1,9 @@
 <?php
 
-namespace Core\modules;
-class security
-{
+namespace Core;
 
+class Security
+{
     public function getList(): array
     {
         return hash_algos();
@@ -21,8 +21,9 @@ class security
             $inputKey = random_bytes(32);
             $salt = random_bytes(16);
             return hash_hkdf('sha256', $inputKey, 32, 'aes-256-encryption', $salt);
-        } catch (Exception $e) {
-            return false;
+
+        } catch (\Exception $e) {
+            throw new Exception("Could not generate a random hashed key.");
         }
     }
 
@@ -31,7 +32,7 @@ class security
         return hash($algo, $data, $binary);
     }
 
-    public function getMultiHash($data)
+    public function getMultiHash($data): string
     {
         $result = "";
         foreach (hash_algos() as $v) {

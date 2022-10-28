@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use Core\Model;
+use Core\Security;
 use PDO;
 
-class Post extends \Core\Model
+class Post extends Model
 {
 
-    public static function getAll(){
-
+    public static function getAll(): bool|array
+    {
         try {
             $db = static::getDB();
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $db->query('SELECT * FROM members ORDER BY id');
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e){
-            echo $e->getMessage();
+            throw new Exception($e->getMessage());
         }
     }
 }
