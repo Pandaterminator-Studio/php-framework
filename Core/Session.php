@@ -1,7 +1,8 @@
 <?php
 
-namespace Core\modules;
-class session
+namespace Core;
+
+class Session
 {
 
     function __construct()
@@ -9,12 +10,12 @@ class session
         session_start();
     }
 
-    public function Check($session)
+    public function Check($session): bool
     {
         return isset($_SESSION[$session]) && $session != "";
     }
 
-    public function Add($name, $value)
+    public function Add($name, $value): bool
     {
         if (!$this->Check($name)) {
             $_SESSION[$name] = $value;
@@ -24,7 +25,7 @@ class session
         }
     }
 
-    public function Remove($name)
+    public function Remove($name): bool
     {
         if (!$this->Check($name)) {
             unset($_SESSION[$name]);
@@ -34,7 +35,7 @@ class session
         }
     }
 
-    public function Update($name, $value)
+    public function Update($name, $value): bool
     {
         if (!$this->Check($name)) {
             $_SESSION[$name] = $value;
@@ -44,7 +45,7 @@ class session
         }
     }
 
-    public function Destroy()
+    public function Destroy(): void
     {
         session_destroy();
         header("location: index.php");
