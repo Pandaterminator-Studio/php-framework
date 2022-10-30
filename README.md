@@ -24,9 +24,9 @@ Iris is a PHP-Framework created to make it easy to build a website, without need
 ### Views, controls & models 
 Iris uses TWIG to handle views on your application. To use your own HTML.
 
-To do so you need to edit the base.html file in the Views folder. These will be the base of your application.
+To do so you need to edit the 'base.html' file in the Views folder. These will be the base of your application.
 
-What you need to include in your base.html
+# What you need to include in your base.html
 
 If you want to change the title of the window when navigating pages use following title tag in your HTML head.
 
