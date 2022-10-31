@@ -1,10 +1,11 @@
 <?php
 namespace App\Controllers;
 
+use Core\Controller;
 use \Core\View;
 use App\Models\Post;
 
-class Posts extends \Core\Controller
+class Posts extends Controller
 {
 
     public function indexAction(){
