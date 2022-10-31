@@ -16,7 +16,8 @@ class Error
         }
     }
 
-    public static function exceptionHandler($exception){
+    public static function exceptionHandler($exception): void
+    {
         $code = $exception->getCode();
         if($code != 404){
             $code = 500;
@@ -67,8 +68,8 @@ class Error
             $message .= "\nThrown in '" . $exception->getFile(). "' on line " . $exception->getLine();
 
             error_log($message);
-            //echo "<h1>An error occured</h1>";
-            View::renderTemplate("$code.html");
+            if($code = 404) header("Location: /AppError/index");
+            if($code = 500) header("Location: /AppError/error");
         }
     }
 }

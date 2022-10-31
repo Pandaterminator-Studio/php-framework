@@ -13,7 +13,7 @@ class Config
     const DB_PORT = 3306;
 
     //debug settings
-    const SHOW_ERRORS = false;
+    const SHOW_ERRORS = true;
     const save_mysql = false; //not added yet..
 
     //

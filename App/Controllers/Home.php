@@ -20,4 +20,8 @@ class Home extends \Core\Controller
             'colours' => ['red', 'green', 'blue']
         ]);
     }
+
+    public function newAction(){
+        echo "subaction works";
+    }
 }
