@@ -26,7 +26,7 @@ class Error
 
         if(\App\Config::SHOW_ERRORS){ ?>
             <!DOCTYPE html>
-            <html>
+            <html lang="EN">
             <head>
                 <meta charset="UTF-8">
                 <title>ERROR</title>
