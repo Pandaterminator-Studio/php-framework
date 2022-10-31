@@ -10,12 +10,12 @@ use \Core\Cookie;
 class Home extends \Core\Controller
 {
 
-    protected function before(){
+    protected function before(): bool {
         return true;
     }
 
-    protected function after(){
-
+    protected function after(): bool {
+        return true;
     }
 
     public function indexAction (){
@@ -25,14 +25,10 @@ class Home extends \Core\Controller
         $Cookie = new Cookie();
         $Session = new Session();
 
-        /*View::renderTemplate('Home/index.html', [
+        View::renderTemplate(template: 'Home/index.html', args: [
             'name' => 'Raphael',
             'colours' => ['red', 'green', 'blue']
-        ]);*/
+        ]);
 
-    }
-
-    public function newAction(){
-        echo "subaction works";
     }
 }
