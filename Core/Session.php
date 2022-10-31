@@ -10,14 +10,18 @@ class Session
         session_start();
     }
 
-    public function Check($session): bool
+    public static function Check($session): bool
     {
-        return isset($_SESSION[$session]) && $session != "";
+        if(isset($_SESSION[$session]) && ($session != "")){
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public function Add($name, $value): bool
+    public static function Add($name, $value): bool
     {
-        if (!$this->Check($name)) {
+        if (!self::Check($name)) {
             $_SESSION[$name] = $value;
             return true;
         } else {
@@ -25,9 +29,9 @@ class Session
         }
     }
 
-    public function Remove($name): bool
+    public static function Remove($name): bool
     {
-        if (!$this->Check($name)) {
+        if (!self::Check($name)) {
             unset($_SESSION[$name]);
             return true;
         } else {
@@ -35,9 +39,9 @@ class Session
         }
     }
 
-    public function Update($name, $value): bool
+    public static function Update($name, $value): bool
     {
-        if (!$this->Check($name)) {
+        if (!self::Check($name)) {
             $_SESSION[$name] = $value;
             return true;
         } else {
@@ -45,7 +49,7 @@ class Session
         }
     }
 
-    public function Destroy(): void
+    public static function Destroy(): void
     {
         session_destroy();
         header("location: index.php");
