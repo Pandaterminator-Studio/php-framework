@@ -15,7 +15,7 @@ abstract  class Controller
     /**
      * @throws Exception
      */
-    public function __call($name, $args){
+    public function __call($name, $args): void {
         $method = $name.'Action';
         if(method_exists($this, $method)){
             if($this->before() !== false){
@@ -27,11 +27,13 @@ abstract  class Controller
         }
     }
 
-    protected function after(){
+    protected function after()
+    {
 
     }
 
-    protected function before(){
+    protected function before()
+    {
 
     }
 }

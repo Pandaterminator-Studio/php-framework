@@ -1,22 +1,339 @@
 {% extends "base.html" %}
+
+{% use "sidebar.html" %}
+{% use "navbar.html" %}
+
 {% block title %} Dashboard {% endblock%}
 {% block body %}
 
-<div class="row">
-  <div class="col s12 m12">
-    <div class="card blue-grey darken-1">
-      <div class="card-content white-text">
-        <span class="card-title">Card Title</span>
-        <p>I am a very simple card. I am good at containing small bits of information.
-          I am convenient because I require little markup to use effectively.</p>
-      </div>
-      <div class="card-action">
-        <a href="#">This is a link</a>
-        <a href="#">This is a link</a>
-      </div>
-    </div>
-  </div>
-</div>
+<div class="min-height-300 bg-primary position-absolute w-100"></div>
 
+{% block sidebar %}
+{{ parent() }}
+{% endblock %}
+
+  {% block main %}
+    <main class="main-content position-relative border-radius-lg ">
+      {% block navbar %}
+      {{ parent() }}
+      {% endblock %}
+      {% block content %}
+        <div class="container-fluid py-4">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="row">
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Payment Account</p>
+                            <h5 class="font-weight-bolder">
+                              $53,000
+                            </h5>
+                            <p class="mb-0">
+                              No interest
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
+                            <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Savings Account</p>
+                            <h5 class="font-weight-bolder">
+                              $20,000
+                            </h5>
+                            <p class="mb-0">
+                              <span class="text-success text-sm font-weight-bolder">5.5%</span>
+                              Daily intrest
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle">
+                            <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Assets</p>
+                            <h5 class="font-weight-bolder">
+                              $485.664
+                            </h5>
+                            <p class="mb-0">
+                              Trucks, Trailers, Buildings
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle">
+                            <i class="ni ni-paper-diploma text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Earnings</p>
+                            <h5 class="font-weight-bolder">
+                              -$27.300
+                            </h5>
+                            <p class="mb-0">
+                              Today
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Level</p>
+                            <h5 class="font-weight-bolder">
+                              7
+                            </h5>
+                            <p class="mb-0">
+                              <span class="text-success text-sm font-weight-bolder">12%</span>
+                              Progress
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">High Score Rank</p>
+                            <h5 class="font-weight-bolder">
+                              # 3.713
+                            </h5>
+                            <p class="mb-0">
+                              Based on: Company Points
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Company points</p>
+                            <h5 class="font-weight-bolder">
+                              621
+                            </h5>
+                            <p class="mb-0">
+
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Freights</p>
+                            <h5 class="font-weight-bolder">
+                              97
+                            </h5>
+                            <p class="mb-0">
+                             Completed
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="card  mb-4">
+                    <div class="card-body p-3">
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="numbers">
+                            <p class="text-sm mb-0 text-uppercase font-weight-bold">Current Season</p>
+                            <h5 class="font-weight-bolder">
+                              Winter
+                            </h5>
+                            <p class="mb-0">
+                              1 Season = 24 Hours
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-4 text-end">
+                          <div class="icon icon-shape bg-gradient-warning shadow-warning text-center rounded-circle">
+                            <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12 col-md-12 mb-4 mb-md-0">
+              <div class="card">
+                <div class="table-responsive">
+                  <table class="table align-items-center mb-0">
+                    <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Points</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Freights (Week)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/team-2.jpg" class="avatar avatar-sm me-3">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-xs">Adam1992</h6>
+                            <p class="text-xs text-secondary mb-0">ADSVTrans</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">821.216</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        7740
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div>
+                            <img src="https://demos.creative-tim.com/soft-ui-design-system-pro/assets/img/team-2.jpg" class="avatar avatar-sm me-3">
+                          </div>
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-xs">MAZF1</h6>
+                            <p class="text-xs text-secondary mb-0">MazLine</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">816.058</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        4020
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="footer pt-3  ">
+            <div class="container-fluid">
+              <div class="row align-items-center justify-content-lg-between">
+                <div class="col-lg-6 mb-lg-0 mb-4">
+                  <div class="copyright text-center text-sm text-muted text-lg-start">
+                    By playing this game, you agree to our <a href="/">Terms of Use</a> & <a href="/">Privacy Policy</a>.
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                    <li class="nav-item">
+                      <a href="" class="nav-link text-muted" target="_blank">Google play</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="" class="nav-link text-muted" target="_blank">App Store</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="" class="nav-link text-muted" target="_blank">Facebook</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      {% endblock %}
+    </main>
+  {% endblock %}
 {% endblock%}
 

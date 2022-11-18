@@ -25,10 +25,8 @@ class Home extends \Core\Controller
         $Cookie = new Cookie();
         $Session = new Session();
 
-        View::renderTemplate(template: 'Home/index.html', args: [
-            'name' => 'Raphael',
-            'colours' => ['red', 'green', 'blue']
-        ]);
+        View::renderTemplate(template: 'Home/index.html', args:
+            ['user' => ['username' => 'PandaTerminator007']]);
 
     }
 }
