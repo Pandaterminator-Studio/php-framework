@@ -4,7 +4,7 @@ namespace Core;
 class OpenAI
 {
 
-    public function generateText($prompt, $model = 'gpt-3.5-turbo', $maxTokens = 100)
+    public static function generateText($prompt, $model = 'gpt-3.5-turbo', $maxTokens = 100)
     {
         $data = [
             'model' => $model,
@@ -14,11 +14,11 @@ class OpenAI
             'max_tokens' => $maxTokens
         ];
 
-        $response = $this->sendRequest('chat/completions', $data);
+        $response = self::sendRequest('chat/completions', $data);
         return $response['choices'][0]['message']['content'];
     }
 
-    public function generateImage($prompt, $size = '512x512', $n = 1)
+    public static function generateImage($prompt, $size = '512x512', $n = 1)
     {
         $data = [
             'prompt' => $prompt,
@@ -26,11 +26,11 @@ class OpenAI
             'n' => $n
         ];
 
-        $response = $this->sendRequest('images/generations', $data);
+        $response = self::sendRequest('images/generations', $data);
         return $response['data'][0]['url'];
     }
 
-    public function transcribeAudio($audioFilePath, $language = 'en')
+    public static function transcribeAudio($audioFilePath, $language = 'en')
     {
         $data = [
             'file' => new \CURLFile($audioFilePath),
@@ -38,29 +38,29 @@ class OpenAI
             'language' => $language
         ];
 
-        $response = $this->sendRequest('audio/transcriptions', $data, true);
+        $response = self::sendRequest('audio/transcriptions', $data, true);
         return $response['text'];
     }
 
-    public function translateText($text, $targetLanguage = 'en')
+    public static function translateText($text, $targetLanguage = 'en')
     {
         $prompt = "Translate the following text to $targetLanguage: " . $text;
-        return $this->generateText($prompt, \App\Config::OPEN_AI_DEFAULT_MODEL, 200);
+        return self::generateText($prompt, \App\Config::OPEN_AI_DEFAULT_MODEL, 200);
     }
 
-    public function analyzeContent($content)
+    public static function analyzeContent($content)
     {
         $prompt = "Analyze the following content and provide a summary of key points: " . $content;
-        return $this->generateText($prompt, \App\Config::OPEN_AI_DEFAULT_MODEL, 300);
+        return self::generateText($prompt, \App\Config::OPEN_AI_DEFAULT_MODEL, 300);
     }
 
-    public function generateCode($language, $task)
+    public static function generateCode($language, $task)
     {
         $prompt = "Generate $language code for the following task: " . $task;
-        return $this->generateText($prompt, \App\Config::OPEN_AI_DEFAULT_MODEL, 500);
+        return self::generateText($prompt, \App\Config::OPEN_AI_DEFAULT_MODEL, 500);
     }
 
-    private function sendRequest($data, $isMultipart = false)
+    private static function sendRequest($data, $isMultipart = false)
     {
         $ch = curl_init(\App\Config::OPEN_AI_ENDPOINT);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

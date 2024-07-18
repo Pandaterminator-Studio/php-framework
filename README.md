@@ -12,10 +12,11 @@ Iris is a PHP-Framework created to make it easy to build a website, without need
 - Error logging system, local or in database.
 - Easy to enable functions via config file.
 - Build-in page router check wiki how to edit.
-- Build-in hashing classes.
+- Build-in hashing classes and other security functions
 - Advanced error handler.
 - Build-in PDO style database handler
 - Build-in Twig view handler so u can use HTML to design your application layout.
+- Build in AI functions (OpenAI & ClaudAI)
 - More to come..
 
 
@@ -204,3 +205,73 @@ Note: In our example the model returns an array.
     </ul>
     {% endblock%}
 
+# OpenAI & ClaudAI.
+
+First you will need to setup your API keys in the config file of Iris.
+
+    const OPEN_AI_API_KEY = "YOUR KEY HERE";
+    const OPEN_AI_ENDPOINT = "https://api.openai.com/v1/";
+    const OPEN_AI_DEFAULT_MODEL = "gpt-3.5-turbo";
+
+    const CLAUDE_AI_API_KEY = "YOUR KEY HERE";
+    const CLAUD_AI_ENDPOINT = "https://api.anthropic.com/v1/messages";
+
+### OpenAI functions
+
+For the moment the following functions are included:
+
+  - Text response
+  - Image generation
+  - Transcription
+  - Translation
+  - Analysis
+  - Code generator
+
+Here are some example of how to use it:
+
+    $textResponse = OpenAI::generateText("Tell me a joke about programming.");
+    $imageUrl = OpenAI::generateImage("A futuristic city with flying cars");
+    $transcription = OpenAI::transcribeAudio("/path/to/audio/file.mp3");
+    $translation = OpenAI::translateText("Hello, world!", "French");
+    $analysis = OpenAI::analyzeContent("Long text to be analyzed...");
+    $code = OpenAI::generateCode("Python", "Create a function that calculates the factorial of a number.");
+
+### ClaudAI functions
+
+For the moment the following functions are included:
+
+- Text response
+- Translation
+- Analysis
+- Code generator
+
+Here are some example of how to use it:
+
+    $response = ClaudAI::generateResponse("Tell me a joke about programming.");
+    $analysis = ClaudAI::analyzeText("Long text to be analyzed...");
+    $translation = ClaudAI::translateText("Hello, world!", "French");
+    $code = ClaudAI::generateCode("Python", "Create a function that calculates the factorial of a number.");
+
+# Security functions
+
+These new functions add significant functionality to the Security class:
+
+  - Secure random token generation for various purposes.
+  - Data encryption and decryption for sensitive information.
+  - Modern password hashing and verification.
+  - CSRF protection mechanisms.
+  - Input sanitization to prevent XSS attacks.
+  - Secure file naming to prevent unauthorized access to uploaded files.
+  - Password strength checking.
+
+### Some examples
+
+    $token = Security::generateRandomToken();
+    $encryptedData = Security::encryptData('sensitive data', 'secret_key');
+    $decryptedData = Security::decryptData($encryptedData, 'secret_key');
+    $passwordHash = Security::hashPassword('user_password');
+    $isPasswordValid = Security::verifyPassword('user_password', $passwordHash);
+    $csrfToken = Security::generateCSRFToken();
+    $sanitizedInput = Security::sanitizeInput($_POST['user_input']);
+    $secureFilename = Security::generateSecureFileName('user_upload.jpg');
+    $isStrong = Security::isStrongPassword('User@Password123');
