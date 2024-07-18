@@ -13,12 +13,15 @@ class Config
     const DB_PORT = 3306;
 
     //AI settings
-    const ENABLE_OPEN_AI = false;
     const OPEN_AI_API_KEY = "";
-
-    const ENABLE_CLAUDE_AI = false;
+    const OPEN_AI_ENDPOINT = "https://api.openai.com/v1/";
+    const OPEN_AI_DEFAULT_MODEL = "gpt-3.5-turbo";
+   
     const CLAUDE_AI_API_KEY = "";
+    const CLAUD_AI_ENDPOINT = "https://api.anthropic.com/v1/messages";
 
+    //Google
+    const GOOGLE_API_KEY = "";
 
     //debug settings
     const SHOW_ERRORS = true;
