@@ -12,11 +12,19 @@ class Config
     const DB_NAME = 'panda';
     const DB_PORT = 3306;
 
+    //AI settings
+    const ENABLE_OPEN_AI = false;
+    const OPEN_AI_API_KEY = "";
+
+    const ENABLE_CLAUDE_AI = false;
+    const CLAUDE_AI_API_KEY = "";
+
+
     //debug settings
     const SHOW_ERRORS = true;
     const save_mysql = false; //not added yet..
 
-    //
+    //SESSION && COOKIES
     const use_session = true;
     const use_cookie = true;
 
