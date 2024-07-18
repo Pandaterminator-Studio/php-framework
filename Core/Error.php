@@ -68,8 +68,10 @@ class Error
             $message .= "\nThrown in '" . $exception->getFile(). "' on line " . $exception->getLine();
 
             error_log($message);
-            if($code = 404) header("Location: /AppError/index");
-            if($code = 500) header("Location: /AppError/error");
+            if($code = 403) header("Location: /AppError/403");
+            if($code = 404) header("Location: /AppError/404");
+            if($code = 500) header("Location: /AppError/500");
+            if($code = 503) header("Location: /AppError/503");
         }
     }
 }

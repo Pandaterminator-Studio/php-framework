@@ -19,6 +19,10 @@ class Session
         }
     }
 
+    public static function List(): array {
+        var_dump($_SESSION);
+    }
+
     public static function Add($name, $value): bool
     {
         if (!self::Check($name)) {
