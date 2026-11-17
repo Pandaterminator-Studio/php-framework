@@ -2,7 +2,7 @@
 
 namespace Core;
 
-class ClaudAI
+class ClaudeAI
 {
     public static function generateResponse($prompt, $maxTokens = 100)
     {
@@ -38,7 +38,7 @@ class ClaudAI
 
     private static function sendRequest($data)
     {
-        $ch = curl_init(\APP\Config::CLAUD_AI_ENDPOINT);
+        $ch = curl_init(\App\Config::CLAUD_AI_ENDPOINT);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));

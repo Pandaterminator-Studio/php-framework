@@ -1,5 +1,21 @@
-RewriteEngine On
-RewriteBase /
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+Options -Indexes -MultiViews -FollowSymLinks -SymLinksIfOwnerMatch -ExecCGI -Includes
+DirectoryIndex index.php
+FallbackResource /index.php
+ErrorDocument 403 "Not found."
+ErrorDocument 404 "Not found."
+
+<If "%{REQUEST_URI} =~ m#(?:^|/)\.# || %{THE_REQUEST} =~ m#(?i)\s[^?\s]*(?:%2f|%5c|%25|%00)#">
+    Require all denied
+</If>
+
+<If "%{REQUEST_URI} =~ m#(?i)\.(?:php[0-9]*|phps|phtml|pht|phar|inc)(?:[./~]|$)# && %{REQUEST_URI} != '/index.php'">
+    Require all denied
+</If>
+
+<If "-f %{REQUEST_FILENAME} && %{REQUEST_FILENAME} !~ m#(?i)(?:/index\.php|\.(?:css|js|mjs|png|jpe?g|gif|webp|avif|ico|svg|eot|ttf|otf|woff2?))$#">
+    Require all denied
+</If>
+
+<FilesMatch "(?i)^(?!index\.php$)(?:\.|.*\.(?:php[0-9]*|phps|phtml|pht|phar|inc|env|ini|conf|config|log|sql|sqlite[0-9]*|db|bak|backup|old|orig|save|swp|swo|pem|key|p12|pfx)(?:[.~]|$)|.*~$)">
+    Require all denied
+</FilesMatch>

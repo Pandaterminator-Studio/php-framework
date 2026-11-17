@@ -1,0 +1,74 @@
+name: PHP validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: php-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+    env:
+      COMPOSER_NO_INTERACTION: '1'
+    services:
+      mysql:
+        image: ${{ matrix.php == '8.4' && 'mysql:8.4' || '' }}
+        env:
+          MYSQL_ROOT_PASSWORD: iris-disposable-test
+          MYSQL_ROOT_HOST: '%'
+        ports:
+          - 127.0.0.1:33307:3306
+        options: >-
+          --health-cmd="mysqladmin ping --protocol=tcp --host=127.0.0.1 --silent"
+          --health-interval=5s --health-timeout=3s --health-retries=30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Set up PHP and Composer
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, iconv, openssl, pdo_mysql, pdo_sqlite, tokenizer
+          coverage: none
+          tools: composer:v2
+      - name: Install locked dependencies
+        run: composer install --prefer-dist --no-progress --no-plugins --no-scripts
+      - name: Validate Composer configuration and platform
+        run: |
+          composer validate --no-check-publish
+          composer check-platform-reqs
+      - name: Check PHP syntax
+        run: composer lint
+      - name: Run isolated regression suites
+        run: composer test -- --tests-only
+      - name: Run example applications
+        run: |
+          for project in examples/reservation-form examples/catalog-api examples/sales-report-worker; do
+            composer --working-dir="$project" validate --no-check-publish
+            composer --working-dir="$project" install --prefer-dist --no-progress --no-plugins --no-scripts
+            composer --working-dir="$project" test
+          done
+      - name: Test database queue on MySQL 8.4
+        if: matrix.php == '8.4'
+        env:
+          IRIS_TEST_MYSQL_PORT: '33307'
+          IRIS_TEST_MYSQL_USER: root
+          IRIS_TEST_MYSQL_PASSWORD: iris-disposable-test
+        run: php tests/integration/mysql-queue.php
+      - name: Audit locked dependencies
+        run: composer audit --locked

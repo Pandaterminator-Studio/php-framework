@@ -11,11 +11,27 @@ class Google
 {
     private $client;
 
-    public function __construct($clientConfigPath)
+    public function __construct($clientConfigPath = null, ?string $apiKey = null)
     {
+        if (!class_exists(Google_Client::class)) {
+            throw new \LogicException('Install google/apiclient to use the Google integration.');
+        }
         $this->client = new Google_Client();
-        $this->client->setAuthConfig($clientConfigPath);
+        if ($clientConfigPath !== null) {
+            $this->client->setAuthConfig($clientConfigPath);
+        }
         $this->client->setAccessType('offline');
+        if ($apiKey !== null) {
+            $this->setApiKey($apiKey);
+        }
+    }
+
+    public function setApiKey(string $apiKey): void
+    {
+        if (trim($apiKey) === '') {
+            throw new \InvalidArgumentException('A non-empty Google Maps API key is required.');
+        }
+        $this->client->setDeveloperKey($apiKey);
     }
 
     public function setAccessToken($accessToken)
@@ -34,24 +50,43 @@ class Google
         return $this->client->fetchAccessTokenWithAuthCode($authCode);
     }
 
-    // Google Maps API functions
-    public function geocode($address)
+    public function geocode(string $address): array
     {
-        $apiKey = $this->client->getConfig('api_key');
-        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $apiKey;
-        $response = file_get_contents($url);
-        return json_decode($response, true);
+        return $this->mapsRequest('geocode', ['address' => $address]);
     }
 
-    public function getDistance($origin, $destination, $mode = 'driving')
+    public function getDistance(string $origin, string $destination, string $mode = 'driving'): array
     {
-        $apiKey = $this->client->getConfig('api_key');
-        $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" . urlencode($origin) . "&destinations=" . urlencode($destination) . "&mode=" . $mode . "&key=" . $apiKey;
-        $response = file_get_contents($url);
-        return json_decode($response, true);
+        return $this->mapsRequest('distancematrix', ['origins' => $origin, 'destinations' => $destination, 'mode' => $mode]);
     }
 
-    // Google Drive API functions
+    private function mapsRequest(string $endpoint, array $parameters): array
+    {
+        $apiKey = $this->client->getConfig('developer_key');
+        if (!is_string($apiKey) || $apiKey === '') {
+            throw new \LogicException('Configure a Google Maps API key before making Maps requests.');
+        }
+        $parameters['key'] = $apiKey;
+        try {
+            $response = $this->client->getHttpClient()->request('GET', 'https://maps.googleapis.com/maps/api/' . $endpoint . '/json', [
+                'query' => $parameters,
+                'connect_timeout' => 5,
+                'timeout' => 10,
+            ]);
+        } catch (\GuzzleHttp\Exception\GuzzleException $exception) {
+            throw new \RuntimeException('The Google Maps request failed.');
+        }
+        try {
+            $data = json_decode((string) $response->getBody(), true, 32, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $exception) {
+            throw new \UnexpectedValueException('The Google Maps response is not valid JSON.');
+        }
+        if (!is_array($data)) {
+            throw new \UnexpectedValueException('The Google Maps response must contain an object.');
+        }
+        return $data;
+    }
+
     public function listDriveFiles($pageSize = 10)
     {
         $driveService = new Google_Service_Drive($this->client);
@@ -79,7 +114,6 @@ class Google
         return $file->id;
     }
 
-    // Google Calendar API functions
     public function listCalendarEvents($calendarId = 'primary', $maxResults = 10)
     {
         $calendarService = new Google_Service_Calendar($this->client);
@@ -93,8 +127,13 @@ class Google
         return $results->getItems();
     }
 
-    public function createCalendarEvent($calendarId = 'primary', $summary, $description, $start, $end)
+    public function createCalendarEvent($calendarId = 'primary', $summary = null, $description = '', $start = null, $end = null)
     {
+        foreach ([$calendarId, $summary, $start, $end] as $required) {
+            if (!is_string($required) || trim($required) === '') {
+                throw new \InvalidArgumentException('Calendar ID, summary, start and end are required strings.');
+            }
+        }
         $calendarService = new Google_Service_Calendar($this->client);
         $event = new \Google_Service_Calendar_Event(array(
             'summary' => $summary,
@@ -106,7 +145,6 @@ class Google
         return $event->id;
     }
 
-    // Google Sheets API functions
     public function readSheetData($spreadsheetId, $range)
     {
         $sheetsService = new Google_Service_Sheets($this->client);

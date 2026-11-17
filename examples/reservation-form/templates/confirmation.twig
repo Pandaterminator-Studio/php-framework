@@ -1,0 +1,11 @@
+{% extends 'layout.twig' %}
+{% block title %}Samenvatting{% endblock %}
+{% block content %}
+    <h1>Reservering bevestigd</h1>
+    <p>Bedankt, {{ name }}. Dit is je voorbeeldreservering voor de workshop focaccia bakken.</p>
+    <dl>
+        <dt>Aantal plaatsen</dt><dd>{{ seats }}</dd>
+        <dt>Totaalbedrag</dt><dd>€ {{ (total_cents / 100)|number_format(2, ',', '.') }}</dd>
+    </dl>
+    <a class="action" href="{{ form_url }}">Nieuwe reservering</a>
+{% endblock %}

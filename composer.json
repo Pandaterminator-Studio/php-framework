@@ -1,7 +1,44 @@
 {
+    "name": "pandaterminator-studio/iris",
+    "description": "A modular PHP framework with routing, middleware, validation and request integrity protection.",
+    "type": "library",
+    "keywords": ["php", "framework", "mvc", "middleware"],
     "require": {
-        "twig/twig": "^3.0",
-      "ext-curl": "*",
+        "php": "^8.3",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-tokenizer": "*",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0",
+        "twig/twig": "^3.27"
+    },
+    "require-dev": {
         "google/apiclient": "^2.17"
+    },
+    "suggest": {
+        "google/apiclient": "Install to use the optional Google integration helpers."
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "Core/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    },
+    "archive": {
+        "exclude": ["/.github", "/tests", "/examples", "/App", "/public", "/vendor", "/.iris", "/package-lock.json"]
+    },
+    "bin": ["bin/iris"],
+    "scripts": {
+        "lint": "@php tests/run.php --lint",
+        "test": "@php tests/run.php"
+    },
+    "config": {
+        "vendor-dir": ".iris/vendor",
+        "allow-plugins": false
     }
 }

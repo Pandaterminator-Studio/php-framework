@@ -30,19 +30,53 @@ class Security
 
     public static function encryptData($data, $key): string
     {
-        $ivLength = openssl_cipher_iv_length('AES-256-CBC');
-        $iv = openssl_random_pseudo_bytes($ivLength);
-        $encrypted = openssl_encrypt($data, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
-        return base64_encode($iv . $encrypted);
+        if (!is_string($data) || !is_string($key) || strlen($key) < 32) {
+            throw new \InvalidArgumentException('Encryption requires string data and a key of at least 32 bytes.');
+        }
+        $nonce = random_bytes(12);
+        $tag = '';
+        $encrypted = openssl_encrypt(
+            $data,
+            'aes-256-gcm',
+            hash('sha256', $key, true),
+            OPENSSL_RAW_DATA,
+            $nonce,
+            $tag,
+            'iris:v1:aes-256-gcm',
+            16
+        );
+        if (!is_string($encrypted) || strlen($tag) !== 16) {
+            throw new \RuntimeException('Data encryption failed.');
+        }
+        return 'iris:v1:' . base64_encode($nonce . $tag . $encrypted);
     }
 
     public static function decryptData($encryptedData, $key): string
     {
-        $data = base64_decode($encryptedData);
-        $ivLength = openssl_cipher_iv_length('AES-256-CBC');
-        $iv = substr($data, 0, $ivLength);
-        $encrypted = substr($data, $ivLength);
-        return openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        if (!is_string($key) || strlen($key) < 32) {
+            throw new \InvalidArgumentException('Decryption requires a key of at least 32 bytes.');
+        }
+        if (!is_string($encryptedData) || !str_starts_with($encryptedData, 'iris:v1:')) {
+            throw new \UnexpectedValueException('Unsupported or invalid encrypted data.');
+        }
+        $encoded = substr($encryptedData, 8);
+        $data = base64_decode($encoded, true);
+        if (!is_string($data) || strlen($data) < 28 || base64_encode($data) !== $encoded) {
+            throw new \UnexpectedValueException('Unsupported or invalid encrypted data.');
+        }
+        $decrypted = openssl_decrypt(
+            substr($data, 28),
+            'aes-256-gcm',
+            hash('sha256', $key, true),
+            OPENSSL_RAW_DATA,
+            substr($data, 0, 12),
+            substr($data, 12, 16),
+            'iris:v1:aes-256-gcm'
+        );
+        if (!is_string($decrypted)) {
+            throw new \UnexpectedValueException('Encrypted data failed authentication.');
+        }
+        return $decrypted;
     }
 
     public static function hashPassword($password): string
@@ -57,7 +91,9 @@ class Security
 
     public static function generateCSRFToken(): string
     {
-        if (empty($_SESSION['csrf_token'])) {
+        Session::start();
+        $token = $_SESSION['csrf_token'] ?? null;
+        if (!is_string($token) || strlen($token) !== 64 || preg_match('/\A[a-f0-9]{64}\z/', $token) !== 1) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
         return $_SESSION['csrf_token'];
@@ -65,7 +101,12 @@ class Security
 
     public static function validateCSRFToken($token): bool
     {
-        return hash_equals($_SESSION['csrf_token'], $token);
+        Session::start();
+        $storedToken = $_SESSION['csrf_token'] ?? null;
+        return is_string($token) && strlen($token) === 64 &&
+            is_string($storedToken) && strlen($storedToken) === 64 &&
+            preg_match('/\A[a-f0-9]{64}\z/', $token) === 1 &&
+            hash_equals($storedToken, $token);
     }
 
     public static function sanitizeInput($input): string

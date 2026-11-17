@@ -1,0 +1,26 @@
+{% extends 'layout.twig' %}
+{% block content %}
+    <h1>Focaccia bakken</h1>
+    <p>Reserveer voor 1 tot 6 personen. De workshop kost € {{ (workshop.price_cents / 100)|number_format(2, ',', '.') }} per persoon.</p>
+    <form action="{{ action }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf }}">
+        <input type="hidden" name="_integrity_token" value="{{ integrity }}">
+        <input type="hidden" name="workshop_id" value="{{ workshop.workshop_id }}">
+        <input type="hidden" name="price_cents" value="{{ workshop.price_cents }}">
+        <div class="field">
+            <label for="name">Naam op de reservering</label>
+            <input id="name" name="name" autocomplete="name" maxlength="80" value="{{ values.name|default('') }}" required{% if errors.name is defined %} aria-invalid="true" aria-describedby="name-error"{% endif %}>
+            {% if errors.name is defined %}<p class="error" id="name-error">Vul een naam van maximaal 80 tekens in.</p>{% endif %}
+        </div>
+        <div class="field">
+            <label for="seats">Aantal plaatsen</label>
+            <select id="seats" name="seats"{% if errors.seats is defined %} aria-invalid="true" aria-describedby="seats-error"{% endif %}>
+                {% for seats in 1..6 %}
+                    <option value="{{ seats }}"{% if seats == values.seats|default(1) %} selected{% endif %}>{{ seats }}</option>
+                {% endfor %}
+            </select>
+            {% if errors.seats is defined %}<p class="error" id="seats-error">Kies tussen 1 en 6 plaatsen.</p>{% endif %}
+        </div>
+        <button type="submit">Reservering bevestigen</button>
+    </form>
+{% endblock %}

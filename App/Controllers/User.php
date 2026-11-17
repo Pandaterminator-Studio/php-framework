@@ -9,11 +9,6 @@ use \Core\Cookie;
 
 class User extends \Core\Controller
 {
-    $cCurl = new cCurl();
-    $Security = new Security();
-    $Cookie = new Cookie();
-    $Session = new Session();
-
     protected function before(): bool {
         return true;
     }

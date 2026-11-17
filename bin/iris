@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+$autoload = $GLOBALS['_composer_autoload_path'] ?? null;
+$candidates = is_string($autoload) ? [$autoload] : [dirname(__DIR__) . '/.iris/vendor/autoload.php', dirname(__DIR__) . '/vendor/autoload.php'];
+$loaded = false;
+foreach ($candidates as $candidate) {
+    if (is_file($candidate)) {
+        require_once $candidate;
+        $loaded = class_exists(Core\Console\Kernel::class);
+        if ($loaded) {
+            break;
+        }
+    }
+}
+if (!$loaded) {
+    fwrite(STDERR, "Install the framework dependencies with Composer before using iris.\n");
+    exit(1);
+}
+exit((new Core\Console\Kernel())->run(array_slice($argv, 1)));

@@ -3,75 +3,39 @@
 namespace Core;
 
 use ErrorException;
+use Throwable;
 
 class Error
 {
-    /**
-     * @throws ErrorException
-     */
     public static function errorHandler($level, $message, $file, $line): void
     {
-        if(error_reporting() !== 0){
+        if ((error_reporting() & $level) !== 0) {
             throw new ErrorException($message, 0, $level, $file, $line);
         }
     }
 
-    public static function exceptionHandler($exception): void
+    public static function exceptionHandler(Throwable $exception): void
     {
-        $code = $exception->getCode();
-        if($code != 404){
-            $code = 500;
+        $status = $exception instanceof HttpException ? $exception->getStatus() : 500;
+        $message = $exception instanceof HttpException ? $exception->getMessage() : 'Internal server error.';
+        http_response_code($status);
+        if (!headers_sent()) {
+            header('Content-Type: text/plain; charset=UTF-8');
+            header('Cache-Control: no-store');
+            header('X-Content-Type-Options: nosniff');
         }
-        http_response_code($code);
-
-        if(\App\Config::SHOW_ERRORS){ ?>
-            <!DOCTYPE html>
-            <html lang="EN">
-            <head>
-                <meta charset="UTF-8">
-                <title>ERROR</title>
-                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-            </head>
-
-            <body>
-
-
-
-            <div class="row">
-                <div class="col s12 m12">
-                    <div class="card-panel red">
-
-                        <h1>Fatal error</h1>
-                        <p><b>Uncaught exception</b>: ' <?php echo get_class($exception) ;?>'</p>
-                        <p><b>Message</b>: <?php echo $exception->getMessage(); ?></p>
-                        <p><b>Stack trace</b>: <?php echo $exception->getTraceAsString(); ?></p>
-                        <p><b>Thrown in</b> '<?php echo $exception->getFile(); ?>' <b>on line</b> <?php echo $exception->getLine(); ?> </p>
-
-                    </div>
-                </div>
-            </div>
-
-
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-            <script>M.AutoInit();</script>
-            </body>
-            </html>
-        <?php } else {
-            $log = dirname(__DIR__).'/logs/'.date('Y-m-d').'.txt';
-            ini_set('error_log', $log);
-            $message = "Uncaught exception: '" . get_class($exception)."'";
-            $message .= " with message: '" . $exception->getMessage()."'";
-            $message .= "\nStack trace: " . $exception->getTraceAsString();
-            $message .= "\nThrown in '" . $exception->getFile(). "' on line " . $exception->getLine();
-
-            error_log($message);
-            if($code = 403) header("Location: /AppError/403");
-            if($code = 404) header("Location: /AppError/404");
-            if($code = 500) header("Location: /AppError/500");
-            if($code = 503) header("Location: /AppError/503");
+        if (!($exception instanceof HttpException)) {
+            error_log(json_encode([
+                'event' => 'iris.unhandled_exception',
+                'type' => get_class($exception),
+                'file' => basename($exception->getFile()),
+                'line' => $exception->getLine()
+            ], JSON_INVALID_UTF8_SUBSTITUTE));
+        }
+        echo htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        if (getenv('IRIS_DEBUG') === '1' && class_exists(\App\Config::class) && \App\Config::SHOW_ERRORS) {
+            $details = get_class($exception) . ' in ' . $exception->getFile() . ':' . $exception->getLine();
+            echo "\n\n" . htmlspecialchars($details, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         }
     }
 }

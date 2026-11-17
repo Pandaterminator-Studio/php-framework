@@ -4,100 +4,119 @@ namespace Core;
 
 class Cookie
 {
-    private $defaultExpiry;
-    private $path;
-    private $domain;
-    private $secure;
-    private $httponly;
+    private int $defaultExpiry;
+    private string $path;
+    private string $domain;
+    private bool $secure;
+    private bool $httponly;
+    private array $expiries = [];
 
-    public function __construct($defaultExpiry = 86400 * 30, $path = "/", $domain = "", $secure = false, $httponly = true)
+    public function __construct(int $defaultExpiry = 86400 * 30, string $path = '/', string $domain = '', ?bool $secure = null, bool $httponly = true)
     {
-        $this->defaultExpiry = $defaultExpiry;
+        $this->setDefaultExpiry($defaultExpiry);
         $this->path = $path;
         $this->domain = $domain;
-        $this->secure = $secure;
+        $https = $_SERVER['HTTPS'] ?? '';
+        $this->secure = $secure ?? (is_string($https) && $https !== '' && $https !== '0' && strtolower($https) !== 'off');
         $this->httponly = $httponly;
     }
 
-    public function add($name, $value, $expiry = null): bool
+    public function add(string $name, string $value, ?int $expiry = null): bool
     {
-        $expiry = $expiry ?? time() + $this->defaultExpiry;
-        return setcookie($name, $value, [
+        $expiry = $expiry ?? ($this->defaultExpiry === 0 ? 0 : time() + $this->defaultExpiry);
+        if ($expiry < 0) {
+            throw new \InvalidArgumentException('Cookie expiry must be a Unix timestamp or zero for a session cookie.');
+        }
+        $success = setcookie($name, $value, $this->options($expiry));
+        if ($success) {
+            $this->expiries[$name] = $expiry === 0 ? null : $expiry;
+        }
+        return $success;
+    }
+
+    private function options(int $expiry): array
+    {
+        return [
             'expires' => $expiry,
             'path' => $this->path,
             'domain' => $this->domain,
             'secure' => $this->secure,
             'httponly' => $this->httponly,
             'samesite' => 'Strict'
-        ]);
+        ];
     }
 
-    public function modify($name, $value, $expiry = null): bool
+    public function modify(string $name, string $value, ?int $expiry = null): bool
     {
         return $this->add($name, $value, $expiry);
     }
 
-    public function delete($name): bool
+    public function delete(string $name): bool
     {
-        return setcookie($name, '', time() - 3600, $this->path, $this->domain, $this->secure, $this->httponly);
+        $success = setcookie($name, '', $this->options(time() - 3600));
+        if ($success) {
+            unset($this->expiries[$name]);
+        }
+        return $success;
     }
 
     public function get($name, $default = null)
     {
-        return $_COOKIE[$name] ?? $default;
+        $value = $_COOKIE[$name] ?? null;
+        return is_string($value) ? $value : $default;
     }
 
     public function exists($name): bool
     {
-        return isset($_COOKIE[$name]);
+        return isset($_COOKIE[$name]) && is_string($_COOKIE[$name]);
     }
 
     public function checkIfAnyCookie(): bool
     {
-        return !empty($_COOKIE);
+        return $this->listCookies() !== [];
     }
 
     public function listCookies(): array
     {
-        return $_COOKIE;
+        return array_filter($_COOKIE, 'is_string');
     }
 
     public function listCookiesAsString(): string
     {
         $cookies = "";
-        foreach ($_COOKIE as $key => $val) {
-            $cookies .= htmlspecialchars($key) . ' is ' . htmlspecialchars($val) . "<br>\n";
+        foreach ($this->listCookies() as $key => $value) {
+            $cookies .= htmlspecialchars((string) $key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ' is ' . htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "<br>\n";
         }
         return $cookies;
     }
 
     public function clearAll(): void
     {
-        foreach ($_COOKIE as $key => $value) {
-            $this->delete($key);
+        foreach (array_keys($this->listCookies()) as $name) {
+            $this->delete((string) $name);
         }
     }
 
-    public function setSecure($secure): void
+    public function setSecure(bool $secure): void
     {
         $this->secure = $secure;
     }
 
-    public function setHttpOnly($httponly): void
+    public function setHttpOnly(bool $httponly): void
     {
         $this->httponly = $httponly;
     }
 
-    public function setDefaultExpiry($expiry): void
+    public function setDefaultExpiry(int $expiry): void
     {
+        if ($expiry < 0) {
+            throw new \InvalidArgumentException('The default cookie lifetime cannot be negative.');
+        }
         $this->defaultExpiry = $expiry;
     }
 
-    public function getExpiryDate($name): ?int
+    public function getExpiryDate(string $name): ?int
     {
-        if (isset($_COOKIE[$name])) {
-            return $_COOKIE[$name . '_expiry'] ?? null;
-        }
-        return null;
+        return $this->expiries[$name] ?? null;
     }
 }

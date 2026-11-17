@@ -1,0 +1,29 @@
+{
+    "name": "iris-application/app",
+    "type": "project",
+    "require": {
+        "php": "^8.3",
+        "pandaterminator-studio/iris": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "__IRIS_FRAMEWORK_PATH__",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "scripts": {
+        "serve": "@php vendor/bin/iris serve",
+        "test": "@php tests/http.php"
+    },
+    "config": {
+        "allow-plugins": false
+    }
+}

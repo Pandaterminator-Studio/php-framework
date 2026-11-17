@@ -1,0 +1,10 @@
+/.iris/
+/logs/
+/.env
+/.env.*
+!/.env.example
+/vendor/
+/examples/*/vendor/
+/examples/*/.env
+/examples/*/.env.*
+!/examples/*/.env.example

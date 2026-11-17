@@ -1,0 +1,35 @@
+{
+    "name": "iris-examples/reservation-form",
+    "description": "A Twig reservation form with session-bound price integrity checks.",
+    "type": "project",
+    "require": {
+        "php": "^8.3",
+        "pandaterminator-studio/iris": "dev-master",
+        "ext-session": "*"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../..",
+            "options": {
+                "symlink": true,
+                "reference": "none",
+                "versions": {
+                    "pandaterminator-studio/iris": "dev-master"
+                }
+            }
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "scripts": {
+        "test": "@php tests/run.php",
+        "serve": "@php vendor/bin/iris serve"
+    },
+    "config": {
+        "allow-plugins": false
+    }
+}
